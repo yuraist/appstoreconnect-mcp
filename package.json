@@ -1,8 +1,25 @@
 {
   "name": "appstoreconnect-mcp",
   "version": "0.1.0",
-  "description": "MCP server for App Store Connect API",
+  "description": "MCP server for App Store Connect API — manage apps, IAPs, subscriptions, TestFlight, and App Review from Claude",
   "type": "module",
+  "license": "MIT",
+  "author": "Yuri Istoshkin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuraist/appstoreconnect-mcp.git"
+  },
+  "homepage": "https://github.com/yuraist/appstoreconnect-mcp",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "app-store-connect",
+    "apple",
+    "in-app-purchase",
+    "subscriptions",
+    "testflight",
+    "claude"
+  ],
   "bin": {
     "appstoreconnect-mcp": "./build/index.js"
   },
