@@ -1,5 +1,9 @@
 # App Store Connect MCP Server
 
+<p align="center">
+  <img src="docs/hero.jpg" alt="App Store Connect MCP Server" width="700">
+</p>
+
 A [Model Context Protocol](https://modelcontextprotocol.io/) server that wraps Apple's App Store Connect API v2. Gives Claude (or any MCP client) direct access to manage apps, in-app purchases, subscriptions, TestFlight, product page experiments, and App Review submissions.
 
 ## What You Can Do
