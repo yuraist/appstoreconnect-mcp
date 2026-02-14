@@ -1,6 +1,6 @@
 {
   "name": "appstoreconnect-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for App Store Connect API — manage apps, IAPs, subscriptions, TestFlight, and App Review from Claude",
   "type": "module",
   "license": "MIT",

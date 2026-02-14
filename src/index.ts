@@ -25,7 +25,7 @@ if (!issuerId || !keyId || !privateKeyPath) {
 
 const server = new McpServer({
   name: "appstoreconnect-mcp",
-  version: "0.1.0",
+  version: "0.1.1",
 });
 
 const client = new AppStoreConnectClient(issuerId, keyId, privateKeyPath);

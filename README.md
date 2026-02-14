@@ -20,7 +20,7 @@ A [Model Context Protocol](https://modelcontextprotocol.io/) server that wraps A
 
 **App Review** — Check review status, view rejection reasons, submit versions for review. Update descriptions, keywords, and What's New text per locale.
 
-See the full [tool reference](docs/tools.md) for all 43+ available tools.
+See the full [tool reference](docs/tools.md) for all 46+ available tools.
 
 ## Prerequisites
 

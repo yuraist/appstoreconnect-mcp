@@ -32,8 +32,10 @@ All tools available through the App Store Connect MCP server, grouped by domain.
 | `create_subscription_group` | Create a new group |
 | `list_subscriptions` | List subscriptions within a group |
 | `create_subscription` | Create a subscription (product ID, duration, group) |
-| `update_subscription` | Update subscription details |
-| `set_subscription_localization` | Localized name/description per locale |
+| `update_subscription` | Update name, review note, group level, family sharing |
+| `list_subscription_localizations` | Display names and descriptions per locale |
+| `set_subscription_localization` | Create or update localized name/description |
+| `list_subscription_price_points` | List available price points, filterable by territory |
 | `set_subscription_price` | Set price points per territory |
 | `list_subscription_offers` | List promotional/offer codes |
 | `create_subscription_offer` | Create an offer (trial, pay-up-front, pay-as-you-go) |

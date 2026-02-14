@@ -95,16 +95,45 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
         subscriptionId: z.string().describe("The subscription ID"),
         name: z.string().optional().describe("New reference name"),
         reviewNote: z.string().optional().describe("Review note for App Review"),
+        groupLevel: z
+          .number()
+          .optional()
+          .describe("Group level (priority) within the subscription group. 1 = highest priority"),
+        familySharable: z
+          .boolean()
+          .optional()
+          .describe("Whether the subscription is shareable with Family Sharing"),
       },
     },
-    async ({ subscriptionId, name, reviewNote }) => {
-      const attributes: Record<string, string> = {};
-      if (name) attributes.name = name;
-      if (reviewNote) attributes.reviewNote = reviewNote;
+    async ({ subscriptionId, name, reviewNote, groupLevel, familySharable }) => {
+      const attributes: Record<string, unknown> = {};
+      if (name !== undefined) attributes.name = name;
+      if (reviewNote !== undefined) attributes.reviewNote = reviewNote;
+      if (groupLevel !== undefined) attributes.groupLevel = groupLevel;
+      if (familySharable !== undefined) attributes.familySharable = familySharable;
       const result = await client.patch(`/v1/subscriptions/${subscriptionId}`, {
         data: { type: "subscriptions", id: subscriptionId, attributes },
       });
       return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+    },
+  );
+
+  server.registerTool(
+    "list_subscription_localizations",
+    {
+      description:
+        "List localizations (display names, descriptions) for a subscription",
+      inputSchema: {
+        subscriptionId: z.string().describe("The subscription ID"),
+      },
+    },
+    async ({ subscriptionId }) => {
+      const localizations = await client.get(
+        `/v1/subscriptions/${subscriptionId}/subscriptionLocalizations`,
+      );
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(localizations, null, 2) }],
+      };
     },
   );
 
@@ -154,6 +183,34 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   );
 
   server.registerTool(
+    "list_subscription_price_points",
+    {
+      description:
+        "List available price points for a subscription, optionally filtered by territory",
+      inputSchema: {
+        subscriptionId: z.string().describe("The subscription ID"),
+        territory: z
+          .string()
+          .optional()
+          .describe("Filter by territory code (e.g. USA, GBR, JPN)"),
+      },
+    },
+    async ({ subscriptionId, territory }) => {
+      const params: Record<string, string> = {};
+      if (territory) {
+        params["filter[territory]"] = territory;
+      }
+      const pricePoints = await client.get(
+        `/v1/subscriptions/${subscriptionId}/pricePoints`,
+        params,
+      );
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(pricePoints, null, 2) }],
+      };
+    },
+  );
+
+  server.registerTool(
     "set_subscription_price",
     {
       description: "Set a price point for a subscription",
@@ -169,20 +226,20 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
     async ({ subscriptionId, pricePointId, startDate }) => {
       const attributes: Record<string, unknown> = {};
       if (startDate) attributes.startDate = startDate;
-      const result = await client.post(
-        `/v1/subscriptions/${subscriptionId}/prices`,
-        {
-          data: {
-            type: "subscriptionPrices",
-            attributes,
-            relationships: {
-              subscriptionPricePoint: {
-                data: { id: pricePointId, type: "subscriptionPricePoints" },
-              },
+      const result = await client.post("/v1/subscriptionPrices", {
+        data: {
+          type: "subscriptionPrices",
+          attributes,
+          relationships: {
+            subscription: {
+              data: { id: subscriptionId, type: "subscriptions" },
+            },
+            subscriptionPricePoint: {
+              data: { id: pricePointId, type: "subscriptionPricePoints" },
             },
           },
         },
-      );
+      });
       return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
     },
   );
