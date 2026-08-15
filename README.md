@@ -20,7 +20,9 @@ A [Model Context Protocol](https://modelcontextprotocol.io/) server that wraps A
 
 **App Review** — Check review status, view rejection reasons, submit versions for review. Update descriptions, keywords, and What's New text per locale.
 
-See the full [tool reference](docs/tools.md) for all 46+ available tools.
+**Keyword Research (Apple Ads)** — Apple's own App Store search term popularity, keyword suggestions, and impression share. Optional, and needs separate credentials — see [Apple Ads setup](#apple-ads-setup-optional).
+
+See the full [tool reference](docs/tools.md) for all 51+ available tools.
 
 ## Prerequisites
 
@@ -54,6 +56,40 @@ ASC_PRIVATE_KEY_PATH=/path/to/AuthKey_XXXXXXXXXX.p8
 ```
 
 You'll find the Issuer ID and Key ID on the [App Store Connect API Keys](https://appstoreconnect.apple.com/access/integrations/api) page.
+
+## Apple Ads Setup (optional)
+
+In August 2026 Apple released the [Apple Ads Platform API 1.0](https://developer.apple.com/documentation/apple-ads-platform-api), which exposes **App Store search term popularity** — first-party keyword demand data that ASO tools previously could only estimate from models and historical data. This server can query it, along with keyword and phrase suggestions.
+
+These tools are off unless you configure them, so the server works fine with App Store Connect alone.
+
+**These are not your App Store Connect credentials.** Apple Ads uses a different host, a different key registry, and a different auth model (OAuth2 client-credentials, where the JWT is only the client secret rather than the bearer token itself). Your `.p8` will not work here.
+
+**What you need:**
+
+- An [Apple Ads account](https://ads.apple.com) that is fully set up — legal entity, tax details, a payment method, and a link to App Store Connect. A free App Store Connect account is not sufficient.
+- API access created by an Account Admin at ads.apple.com → Account Settings → API, where you upload the public half of an EC P-256 key pair and receive a client ID, team ID, and key ID.
+
+Generate the key pair with:
+
+```bash
+openssl ecparam -genkey -name prime256v1 -noout -out apple-ads-private-key.pem
+openssl ec -in apple-ads-private-key.pem -pubout -out apple-ads-public-key.pem
+```
+
+Then add to `.env`:
+
+```
+APPLE_ADS_CLIENT_ID=SEARCHADS.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+APPLE_ADS_TEAM_ID=SEARCHADS.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+APPLE_ADS_KEY_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+APPLE_ADS_PRIVATE_KEY_PATH=/path/to/apple-ads-private-key.pem
+APPLE_ADS_AD_ACCOUNT_ID=your-ad-account-id
+```
+
+Don't know your ad account ID? Leave it unset, start the server, and run the `list_ad_accounts` tool — it's the one call that works without it.
+
+**What the data looks like.** `get_search_term_popularity` returns up to the top 500 search terms per country and genre, scored 1–100 (within genre and overall) and 1–5 (matching the figure in the Apple Ads UI). Only terms with at least 500 searches appear. Scoping is per storefront, not per language. Weekly data is published Mondays at 07:00 UTC with 65 weeks of history; monthly data on the 5th of each month with 15 months. No advertising campaign is required to query it.
 
 ## Usage with Claude Desktop
 

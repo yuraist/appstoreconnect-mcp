@@ -83,3 +83,34 @@ All tools available through the App Store Connect MCP server, grouped by domain.
 | `update_keywords` | Update keywords for a locale |
 | `upload_screenshot` | Upload a screenshot for a locale/display type |
 | `upload_preview` | Upload an app preview video |
+
+## Keyword Research (Apple Ads)
+
+Requires Apple Ads credentials — see [Apple Ads setup](../README.md#apple-ads-setup-optional). These tools are not registered when those environment variables are absent.
+
+| Tool | Description |
+|------|-------------|
+| `list_ad_accounts` | Ad accounts your credentials can reach — run first to find your ad account ID |
+| `get_search_term_popularity` | Apple's first-party App Store search term popularity by country and genre |
+| `get_keyword_suggestions` | Apple's suggested keywords for your app, scored 0–100 |
+| `get_phrase_suggestions` | Natural-language search phrases for an app or brand |
+| `get_impression_share` | Your app's share of search impressions and rank vs competitors |
+
+### `get_search_term_popularity`
+
+The main ASO tool. Returns up to the top 500 terms per country and genre; only terms with 500+ searches are included.
+
+| Parameter | Notes |
+|-----------|-------|
+| `start`, `end` | `YYYY-MM-DD`. For `WEEKLY_SUN_SAT`, start must be a Sunday and end a Saturday |
+| `granularity` | `WEEKLY_SUN_SAT` (65 weeks of history) or `MONTHLY` (15 months). UTC, fixed |
+| `countryOrRegion` | ISO 3166-1 alpha-2 storefront, e.g. `US`. Per storefront, not per language |
+| `genre` | App Store genre name, free text, e.g. `Health & Fitness` |
+| `searchTerm` | Restrict to one exact term |
+| `fields` | Which scores to return; defaults to all four |
+| `sortBy` / `sortOrder` | Defaults to Apple's `genre ASC, rankInGenre ASC` |
+| `limit` | Rows to return, max 5000 |
+
+Returned scores: `rankInGenre` (1 = highest volume), `searchPopularityInGenre` (1–100 within country+genre), `searchPopularity1to100` (1–100 across all genres), `searchPopularity1to5` (matches the Apple Ads UI metric).
+
+No advertising campaign is needed — but an Apple Ads account is. `get_impression_share` and `get_keyword_suggestions`, by contrast, do require a promoted app.
