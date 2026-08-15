@@ -86,7 +86,7 @@ All tools available through the App Store Connect MCP server, grouped by domain.
 
 ## Keyword Research (Apple Ads)
 
-Requires Apple Ads credentials — see [Apple Ads setup](../README.md#apple-ads-setup-optional). These tools are not registered when those environment variables are absent.
+Requires Apple Ads **Advanced** credentials — see [Apple Ads setup](../README.md#apple-ads-setup-optional). Apple Ads Basic has no Platform API access and no keyword data. These tools are not registered when the environment variables are absent.
 
 | Tool | Description |
 |------|-------------|
@@ -113,4 +113,4 @@ The main ASO tool. Returns up to the top 500 terms per country and genre; only t
 
 Returned scores: `rankInGenre` (1 = highest volume), `searchPopularityInGenre` (1–100 within country+genre), `searchPopularity1to100` (1–100 across all genres), `searchPopularity1to5` (matches the Apple Ads UI metric).
 
-No advertising campaign is needed — but an Apple Ads account is. `get_impression_share` and `get_keyword_suggestions`, by contrast, do require a promoted app.
+No advertising campaign or spend is needed — but an Apple Ads Advanced account is. `get_impression_share` and `get_keyword_suggestions`, by contrast, do require a promoted app.

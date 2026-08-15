@@ -65,10 +65,17 @@ These tools are off unless you configure them, so the server works fine with App
 
 **These are not your App Store Connect credentials.** Apple Ads uses a different host, a different key registry, and a different auth model (OAuth2 client-credentials, where the JWT is only the client secret rather than the bearer token itself). Your `.p8` will not work here.
 
+**You must be on [Apple Ads Advanced](https://ads.apple.com/app-store/help/apple-ads-basic/0001-compare-apple-ads-solutions), not Basic.** Apple's comparison page is explicit that Basic gets "no keyword data or access to the Apple Ads Platform API" — it is disqualified twice over. Pick Advanced at signup.
+
+**You do not need a company.** Apple's [setup guide](https://ads.apple.com/app-store/help/get-started/0004-set-up-an-account) says that if you're a sole proprietor you answer "No" to the business-entity question and use your own legal name as the legal entity name. No D-U-N-S number is involved anywhere in this flow, and an Individual Apple Developer account is fine.
+
 **What you need:**
 
-- An [Apple Ads account](https://ads.apple.com) that is fully set up — legal entity, tax details, a payment method, and a link to App Store Connect. A free App Store Connect account is not sufficient.
+- An [Apple Ads Advanced account](https://ads.apple.com). Creating one requires a live iPhone or iPad app on the App Store, an Apple Account with an email address (phone-number-only accounts are rejected), and an App Store Connect role of Admin, Legal, App Manager, or Marketing to link the two.
+- A valid credit or debit card. Prepaid cards, gift cards, and digital wallets like PayPal are explicitly rejected. No minimum spend or deposit is documented — a working card on file is the real requirement.
 - API access created by an Account Admin at ads.apple.com → Account Settings → API, where you upload the public half of an EC P-256 key pair and receive a client ID, team ID, and key ID.
+
+Two settings are permanent once chosen: **account currency and time zone**. Changing currency later means creating a new account. Supported currencies are AUD, GBP, CAD, RMB (mainland China), EUR, INR (UPI only), JPY, MXN, NZD, and USD — check [countries and regions](https://ads.apple.com/app-store/countries-and-regions), which lists permitted advertiser-residence countries separately from the storefronts you can advertise in.
 
 Generate the key pair with:
 
