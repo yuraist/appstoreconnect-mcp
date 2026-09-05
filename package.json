@@ -1,7 +1,7 @@
 {
   "name": "appstoreconnect-mcp",
   "version": "0.1.1",
-  "description": "MCP server for App Store Connect API — manage apps, IAPs, subscriptions, TestFlight, and App Review from Claude",
+  "description": "MCP server for App Store Connect and Apple Ads, compatible with Codex, Claude, and other MCP clients",
   "type": "module",
   "license": "MIT",
   "author": "Yuri Istoshkin",
@@ -18,7 +18,8 @@
     "in-app-purchase",
     "subscriptions",
     "testflight",
-    "claude"
+    "claude",
+    "codex"
   ],
   "bin": {
     "appstoreconnect-mcp": "./build/index.js"
@@ -28,9 +29,13 @@
     "start": "node build/index.js",
     "dev": "tsc --watch",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:live": "node scripts/smoke.mjs --live"
   },
-  "files": ["build"],
+  "files": [
+    "build"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
     "dotenv": "^16.4.0",

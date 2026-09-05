@@ -5,6 +5,7 @@ export function registerBuildsTools({ server, client }: ToolContext): void {
   server.registerTool(
     "list_builds",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List builds for an app, optionally filtered by version or processing state",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -27,6 +28,7 @@ export function registerBuildsTools({ server, client }: ToolContext): void {
   server.registerTool(
     "get_build",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "Get details for a specific build",
       inputSchema: {
         buildId: z.string().describe("The build ID"),
@@ -41,6 +43,7 @@ export function registerBuildsTools({ server, client }: ToolContext): void {
   server.registerTool(
     "list_beta_groups",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List TestFlight beta groups for an app",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -56,6 +59,7 @@ export function registerBuildsTools({ server, client }: ToolContext): void {
   server.registerTool(
     "add_build_to_beta_group",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Assign a build to a TestFlight beta group",
       inputSchema: {
         betaGroupId: z.string().describe("The beta group ID"),
@@ -77,6 +81,7 @@ export function registerBuildsTools({ server, client }: ToolContext): void {
   server.registerTool(
     "list_beta_testers",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List TestFlight beta testers, optionally filtered by beta group",
       inputSchema: {
         betaGroupId: z.string().optional().describe("Filter by beta group ID"),

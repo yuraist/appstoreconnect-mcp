@@ -5,6 +5,7 @@ export function registerReviewTools({ server, client }: ToolContext): void {
   server.registerTool(
     "get_review_status",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "Get the current review status for an app store version",
       inputSchema: {
         versionId: z.string().describe("The app store version ID"),
@@ -19,6 +20,7 @@ export function registerReviewTools({ server, client }: ToolContext): void {
   server.registerTool(
     "get_review_submission",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "Get the latest review submission for an app, including rejection reasons if any",
       inputSchema: {
@@ -42,6 +44,7 @@ export function registerReviewTools({ server, client }: ToolContext): void {
   server.registerTool(
     "list_app_store_version_localizations",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "List localizations for an app store version (descriptions, what's new, keywords per locale)",
       inputSchema: {
@@ -61,6 +64,7 @@ export function registerReviewTools({ server, client }: ToolContext): void {
   server.registerTool(
     "submit_for_review",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Submit an app version for App Store review",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),

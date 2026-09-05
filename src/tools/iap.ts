@@ -5,6 +5,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "list_iaps",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List all in-app purchases for an app",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -19,6 +20,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "get_iap",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "Get details for a specific in-app purchase",
       inputSchema: {
         iapId: z.string().describe("The in-app purchase ID"),
@@ -33,6 +35,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "create_iap",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create a new in-app purchase",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -60,6 +63,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "update_iap",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Update an existing in-app purchase",
       inputSchema: {
         iapId: z.string().describe("The in-app purchase ID"),
@@ -81,6 +85,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "delete_iap",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Delete a draft in-app purchase (only works if not yet submitted for review)",
       inputSchema: {
         iapId: z.string().describe("The in-app purchase ID"),
@@ -99,6 +104,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "list_iap_localizations",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List localizations (display names, descriptions) for an in-app purchase",
       inputSchema: {
         iapId: z.string().describe("The in-app purchase ID"),
@@ -117,6 +123,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "set_iap_localization",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create or update a localization for an in-app purchase",
       inputSchema: {
         iapId: z.string().describe("The in-app purchase ID (used for creating new localizations)"),
@@ -160,6 +167,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "set_iap_price",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Set or update the price for an in-app purchase using a price point ID",
       inputSchema: {
         iapId: z.string().describe("The in-app purchase ID"),
@@ -189,6 +197,7 @@ export function registerIapTools({ server, client }: ToolContext): void {
   server.registerTool(
     "submit_iap_for_review",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Submit an in-app purchase for review independently of the app version",
       inputSchema: {
         iapId: z.string().describe("The in-app purchase ID"),

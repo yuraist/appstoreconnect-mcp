@@ -154,3 +154,25 @@ Your API key (`.p8` file) never leaves your machine. The MCP server runs locally
 ## License
 
 MIT
+
+
+## Codex and other local MCP clients
+
+Build once with `npm ci && npm run build`. Launch with `node scripts/launch.mjs`.
+The launcher loads only `ASC_*` and `APPLE_ADS_*` variables from
+`~/Developer/.secrets/.env`, or the file selected by `ASC_ENV_FILE`.
+Explicit process environment values take precedence. Key material stays local.
+The stdio protocol works from any working directory.
+
+For Codex CLI, register with `codex mcp add appstoreconnect -- node /absolute/path/to/appstoreconnect-mcp/scripts/launch.mjs`.
+Use either this registration or the personal Codex plugin, so tools appear once.
+For Claude Code, use the same command and arguments in the `appstoreconnect`
+MCP entry. No credentials need to be embedded in the client configuration.
+
+`npm run smoke` checks protocol initialization, tool discovery, and annotations.
+`npm run smoke:live` additionally calls the read-only `list_apps` endpoint and
+prints only the count. Neither command changes App Store Connect data.
+
+This is a local connector. A remotely hosted connector would separately need
+Streamable HTTP, client authentication/OAuth, per-user Apple credential storage,
+and a deployment. The personal Codex plugin does not expose a public endpoint.

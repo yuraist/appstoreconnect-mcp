@@ -27,6 +27,7 @@ export function registerAdsTools({ server, adsClient }: AdsToolContext): void {
   server.registerTool(
     "list_ad_accounts",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "List the Apple Ads accounts your API credentials can access, with their ad account IDs. " +
         "Run this first — the ad account ID is required by every other Apple Ads tool and is what " +
@@ -41,6 +42,7 @@ export function registerAdsTools({ server, adsClient }: AdsToolContext): void {
   server.registerTool(
     "get_search_term_popularity",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "Get Apple's first-party App Store search term popularity — the real keyword demand data " +
         "behind ASO, not a third-party estimate. Returns up to the top 500 search terms per " +
@@ -129,6 +131,7 @@ export function registerAdsTools({ server, adsClient }: AdsToolContext): void {
   server.registerTool(
     "get_keyword_suggestions",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "Get Apple's suggested keywords for one of your apps, each with a popularity score of " +
         "0-100. Useful for discovering keywords to target or to put in your App Store keyword field.",
@@ -171,6 +174,7 @@ export function registerAdsTools({ server, adsClient }: AdsToolContext): void {
   server.registerTool(
     "get_phrase_suggestions",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "Get natural-language search phrases associated with an app or brand, or search existing " +
         "phrases by text. Complements get_keyword_suggestions for long-tail ASO research.",
@@ -214,6 +218,7 @@ export function registerAdsTools({ server, adsClient }: AdsToolContext): void {
   server.registerTool(
     "get_impression_share",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "Get your app's share of App Store search impressions for search terms, plus its rank " +
         "against competitors. Unlike search term popularity, this one does require a promoted app.",

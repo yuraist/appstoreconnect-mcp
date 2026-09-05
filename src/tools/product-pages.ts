@@ -7,6 +7,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "list_custom_product_pages",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List all custom product pages for an app",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -21,6 +22,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "create_custom_product_page",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create a new custom product page for an app",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -44,6 +46,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "get_custom_product_page",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "Get details for a specific custom product page",
       inputSchema: {
         pageId: z.string().describe("The custom product page ID"),
@@ -58,6 +61,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "update_custom_product_page",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Update a custom product page name or visibility",
       inputSchema: {
         pageId: z.string().describe("The custom product page ID"),
@@ -81,6 +85,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "list_experiments",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List all A/B test experiments for an app store version",
       inputSchema: {
         versionId: z.string().describe("The app store version ID"),
@@ -99,6 +104,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "get_experiment",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "Get details for a specific A/B test experiment",
       inputSchema: {
         experimentId: z.string().describe("The experiment ID"),
@@ -117,6 +123,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "create_experiment",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create a new A/B test experiment for an app store version",
       inputSchema: {
         versionId: z.string().describe("The app store version ID"),
@@ -150,6 +157,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "start_experiment",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Start running an A/B test experiment",
       inputSchema: {
         experimentId: z.string().describe("The experiment ID"),
@@ -173,6 +181,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "stop_experiment",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Stop a running A/B test experiment",
       inputSchema: {
         experimentId: z.string().describe("The experiment ID"),
@@ -196,6 +205,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "get_experiment_results",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "Get results for an A/B test experiment including conversion rates per treatment",
       inputSchema: {
@@ -217,6 +227,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "update_app_description",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Update the app description for a specific locale",
       inputSchema: {
         localizationId: z.string().describe("The app store version localization ID"),
@@ -241,6 +252,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "update_whats_new",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Update the 'What's New' text for a specific locale",
       inputSchema: {
         localizationId: z.string().describe("The app store version localization ID"),
@@ -265,6 +277,7 @@ export function registerProductPagesTools({ server, client }: ToolContext): void
   server.registerTool(
     "update_keywords",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Update the keywords for a specific locale",
       inputSchema: {
         localizationId: z.string().describe("The app store version localization ID"),

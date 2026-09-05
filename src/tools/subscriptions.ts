@@ -5,6 +5,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "list_subscription_groups",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List subscription groups for an app",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -19,6 +20,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "create_subscription_group",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create a new subscription group for an app",
       inputSchema: {
         appId: z.string().describe("The App Store Connect app ID"),
@@ -42,6 +44,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "list_subscriptions",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List subscriptions within a subscription group",
       inputSchema: {
         groupId: z.string().describe("The subscription group ID"),
@@ -56,6 +59,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "create_subscription",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create a new auto-renewable subscription",
       inputSchema: {
         groupId: z.string().describe("The subscription group ID"),
@@ -90,6 +94,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "update_subscription",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Update an existing subscription",
       inputSchema: {
         subscriptionId: z.string().describe("The subscription ID"),
@@ -121,6 +126,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "list_subscription_localizations",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "List localizations (display names, descriptions) for a subscription",
       inputSchema: {
@@ -140,6 +146,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "set_subscription_localization",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create or update a localization for a subscription",
       inputSchema: {
         subscriptionId: z
@@ -185,6 +192,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "list_subscription_price_points",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description:
         "List available price points for a subscription, optionally filtered by territory",
       inputSchema: {
@@ -213,6 +221,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "set_subscription_price",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Set a price point for a subscription",
       inputSchema: {
         subscriptionId: z.string().describe("The subscription ID"),
@@ -247,6 +256,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "list_subscription_offers",
     {
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
       description: "List promotional offers for a subscription",
       inputSchema: {
         subscriptionId: z.string().describe("The subscription ID"),
@@ -263,6 +273,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "create_subscription_offer",
     {
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
       description: "Create a promotional offer for a subscription",
       inputSchema: {
         subscriptionId: z.string().describe("The subscription ID"),

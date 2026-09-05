@@ -1,0 +1,25 @@
+{
+  "name": "appstoreconnect",
+  "version": "0.1.0",
+  "description": "Manage App Store Connect apps, builds, subscriptions and review status with a local MCP server.",
+  "author": {
+    "name": "Yuri Istomin"
+  },
+  "interface": {
+    "displayName": "App Store Connect",
+    "shortDescription": "Your local Apple release and metadata tools.",
+    "longDescription": "Connect Codex to App Store Connect using credentials stored on this Mac. Supports app status, TestFlight, subscriptions, metadata and optional Apple Ads research.",
+    "developerName": "Yuri Istomin",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Show my apps and their review status.",
+      "List recent TestFlight builds."
+    ]
+  },
+  "mcpServers": "./.mcp.json",
+  "repository": "https://github.com/yuraist/appstoreconnect-mcp"
+}
