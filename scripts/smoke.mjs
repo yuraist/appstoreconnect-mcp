@@ -12,6 +12,11 @@ const client = new Client({ name: "asc-smoke", version: "1.0.0" });
 const transport = new StdioClientTransport({
   command: process.execPath,
   args: [fileURLToPath(new URL("./launch.mjs", import.meta.url))],
+  env: Object.fromEntries(
+    Object.entries(process.env).filter(([name, value]) =>
+      /^(ASC_|APPLE_ADS_)/.test(name) && typeof value === "string",
+    ),
+  ),
   stderr: "pipe",
 });
 try {

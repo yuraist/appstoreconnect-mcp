@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
+import { VERSION } from "./version.js";
 import { getCatalog, type ApiInput } from "./api/catalog.js";
 import { createClient } from "./env.js";
 import { uploadBuild, type BuildUploadInput } from "./api/uploads.js";
@@ -25,7 +26,7 @@ async function main() {
     return;
   }
   if (command === "--version") {
-    console.log("0.2.0");
+    console.log(VERSION);
     return;
   }
   const catalog = getCatalog();

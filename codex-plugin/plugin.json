@@ -1,6 +1,6 @@
 {
   "name": "appstoreconnect",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Apple API tools, complete operation catalog, TestFlight workflows and CLI.",
   "author": {
     "name": "Yuri Istomin"

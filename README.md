@@ -6,7 +6,7 @@
 
 A [Model Context Protocol](https://modelcontextprotocol.io/) server that wraps Apple's App Store Connect API (official OpenAPI 4.5.1). Gives Claude (or any MCP client) direct access to manage apps, in-app purchases, subscriptions, TestFlight, product page experiments, and App Review submissions.
 
-## API-first release 0.2.0
+## API-first release 0.2.1
 
 The server exposes 60 tools plus optional Apple Ads tools. A searchable catalog covers all **1303 operations** in the pinned Apple specification. Search and inspect an operation, then execute a validated GET with `read_api` or a mutation with `write_api`. Reads preserve the JSON:API envelope; writes support dry-run. This avoids thousands of MCP tool definitions while keeping the full public API reachable.
 

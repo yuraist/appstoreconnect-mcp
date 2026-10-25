@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import "dotenv/config";
+import { VERSION } from "./version.js";
 import { McpServer } from "@modelcontextprotocol/server";
 import { serveStdio } from "@modelcontextprotocol/server/stdio";
 import { AppStoreConnectClient } from "./api/client.js";
@@ -32,7 +33,7 @@ serveStdio(() => {
   const server = new McpServer(
     {
       name: "appstoreconnect-mcp",
-      version: "0.2.0",
+      version: VERSION,
     },
     {
       instructions:
@@ -91,5 +92,5 @@ serveStdio(() => {
   return server;
 });
 console.error(
-  "App Store Connect MCP 0.2.0 running on stdio (MCP 2026-07-28 with legacy compatibility)",
+  `App Store Connect MCP ${VERSION} running on stdio (MCP 2026-07-28 with legacy compatibility)`,
 );
