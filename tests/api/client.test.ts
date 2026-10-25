@@ -87,7 +87,9 @@ describe("AppStoreConnectClient", () => {
         json: () =>
           Promise.resolve({
             data: [{ id: "1", type: "apps", attributes: { name: "App1" } }],
-            links: { next: "https://api.appstoreconnect.apple.com/v1/apps?cursor=abc" },
+            links: {
+              next: "https://api.appstoreconnect.apple.com/v1/apps?cursor=abc",
+            },
           }),
       })
       .mockResolvedValueOnce({
@@ -114,7 +116,11 @@ describe("AppStoreConnectClient", () => {
       status: 201,
       json: () =>
         Promise.resolve({
-          data: { id: "new-1", type: "inAppPurchases", attributes: { name: "Gems" } },
+          data: {
+            id: "new-1",
+            type: "inAppPurchases",
+            attributes: { name: "Gems" },
+          },
         }),
     });
 
@@ -125,7 +131,11 @@ describe("AppStoreConnectClient", () => {
       },
     };
     const result = await client.post("/v2/inAppPurchases", body);
-    expect(result).toEqual({ id: "new-1", type: "inAppPurchases", name: "Gems" });
+    expect(result).toEqual({
+      id: "new-1",
+      type: "inAppPurchases",
+      name: "Gems",
+    });
   });
 
   it("throws structured error on API failure", async () => {
@@ -139,7 +149,8 @@ describe("AppStoreConnectClient", () => {
               status: "409",
               code: "STATE_ERROR",
               title: "The request is not valid",
-              detail: "This resource is in a state that does not allow this action.",
+              detail:
+                "This resource is in a state that does not allow this action.",
             },
           ],
         }),
@@ -168,5 +179,51 @@ describe("AppStoreConnectClient", () => {
     const result = await client.get("/v1/apps/1");
     expect(result).toEqual({ id: "1", type: "apps", name: "App1" });
     expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("blocks foreign pagination before sending the token", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: [],
+        links: { next: "https://attacker.example/collect" },
+      }),
+    });
+    await expect(client.get("/v1/apps")).rejects.toThrow(/must stay/);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("bounds rate-limit retries and never retries an ambiguous failed write", async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 429,
+      headers: new Headers({ "Retry-After": "0" }),
+      json: async () => ({
+        errors: [{ code: "RATE_LIMIT", detail: "Too many requests" }],
+      }),
+    });
+    await expect(client.get("/v1/apps")).rejects.toThrow(/429/);
+    expect(mockFetch).toHaveBeenCalledTimes(4);
+    mockFetch.mockReset();
+    mockFetch.mockRejectedValue(new Error("Connection closed"));
+    await expect(client.post("/v1/betaGroups", {})).rejects.toThrow(
+      /Connection closed/,
+    );
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("preserves includes and relationships in raw mode", async () => {
+    const envelope = {
+      data: { id: "1", type: "apps", relationships: { builds: { data: [] } } },
+      included: [],
+      links: {},
+    };
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => envelope,
+    });
+    expect(await client.raw("GET", "/v1/apps/1")).toEqual(envelope);
   });
 });

@@ -1,31 +1,50 @@
 import { z } from "zod";
 import type { ToolContext } from "../types/index.js";
 
-export function registerSubscriptionsTools({ server, client }: ToolContext): void {
+export function registerSubscriptionsTools({
+  server,
+  client,
+}: ToolContext): void {
   server.registerTool(
     "list_subscription_groups",
     {
-      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
-      description: "List subscription groups for an app",
-      inputSchema: {
-        appId: z.string().describe("The App Store Connect app ID"),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
       },
+      description: "List subscription groups for an app",
+      inputSchema: z.object({
+        appId: z.string().describe("The App Store Connect app ID"),
+      }),
     },
     async ({ appId }) => {
       const groups = await client.get(`/v1/apps/${appId}/subscriptionGroups`);
-      return { content: [{ type: "text" as const, text: JSON.stringify(groups, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(groups, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "create_subscription_group",
     {
-      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
-      description: "Create a new subscription group for an app",
-      inputSchema: {
-        appId: z.string().describe("The App Store Connect app ID"),
-        referenceName: z.string().describe("Reference name for the subscription group"),
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: true,
       },
+      description: "Create a new subscription group for an app",
+      inputSchema: z.object({
+        appId: z.string().describe("The App Store Connect app ID"),
+        referenceName: z
+          .string()
+          .describe("Reference name for the subscription group"),
+      }),
     },
     async ({ appId, referenceName }) => {
       const result = await client.post("/v1/subscriptionGroups", {
@@ -37,31 +56,51 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
           },
         },
       });
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "list_subscriptions",
     {
-      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
-      description: "List subscriptions within a subscription group",
-      inputSchema: {
-        groupId: z.string().describe("The subscription group ID"),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
       },
+      description: "List subscriptions within a subscription group",
+      inputSchema: z.object({
+        groupId: z.string().describe("The subscription group ID"),
+      }),
     },
     async ({ groupId }) => {
-      const subs = await client.get(`/v1/subscriptionGroups/${groupId}/subscriptions`);
-      return { content: [{ type: "text" as const, text: JSON.stringify(subs, null, 2) }] };
+      const subs = await client.get(
+        `/v1/subscriptionGroups/${groupId}/subscriptions`,
+      );
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(subs, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "create_subscription",
     {
-      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
       description: "Create a new auto-renewable subscription",
-      inputSchema: {
+      inputSchema: z.object({
         groupId: z.string().describe("The subscription group ID"),
         name: z.string().describe("Reference name"),
         productId: z.string().describe("Product ID (e.g. com.app.monthly)"),
@@ -75,7 +114,7 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
             "ONE_YEAR",
           ])
           .describe("Subscription duration"),
-      },
+      }),
     },
     async ({ groupId, name, productId, subscriptionPeriod }) => {
       const result = await client.post("/v1/subscriptions", {
@@ -87,58 +126,95 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
           },
         },
       });
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "update_subscription",
     {
-      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
       description: "Update an existing subscription",
-      inputSchema: {
+      inputSchema: z.object({
         subscriptionId: z.string().describe("The subscription ID"),
         name: z.string().optional().describe("New reference name"),
-        reviewNote: z.string().optional().describe("Review note for App Review"),
+        reviewNote: z
+          .string()
+          .optional()
+          .describe("Review note for App Review"),
         groupLevel: z
           .number()
           .optional()
-          .describe("Group level (priority) within the subscription group. 1 = highest priority"),
+          .describe(
+            "Group level (priority) within the subscription group. 1 = highest priority",
+          ),
         familySharable: z
           .boolean()
           .optional()
-          .describe("Whether the subscription is shareable with Family Sharing"),
-      },
+          .describe(
+            "Whether the subscription is shareable with Family Sharing",
+          ),
+      }),
     },
-    async ({ subscriptionId, name, reviewNote, groupLevel, familySharable }) => {
+    async ({
+      subscriptionId,
+      name,
+      reviewNote,
+      groupLevel,
+      familySharable,
+    }) => {
       const attributes: Record<string, unknown> = {};
       if (name !== undefined) attributes.name = name;
       if (reviewNote !== undefined) attributes.reviewNote = reviewNote;
       if (groupLevel !== undefined) attributes.groupLevel = groupLevel;
-      if (familySharable !== undefined) attributes.familySharable = familySharable;
+      if (familySharable !== undefined)
+        attributes.familySharable = familySharable;
       const result = await client.patch(`/v1/subscriptions/${subscriptionId}`, {
         data: { type: "subscriptions", id: subscriptionId, attributes },
       });
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "list_subscription_localizations",
     {
-      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       description:
         "List localizations (display names, descriptions) for a subscription",
-      inputSchema: {
+      inputSchema: z.object({
         subscriptionId: z.string().describe("The subscription ID"),
-      },
+      }),
     },
     async ({ subscriptionId }) => {
       const localizations = await client.get(
         `/v1/subscriptions/${subscriptionId}/subscriptionLocalizations`,
       );
       return {
-        content: [{ type: "text" as const, text: JSON.stringify(localizations, null, 2) }],
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify(localizations, null, 2),
+          },
+        ],
       };
     },
   );
@@ -146,20 +222,29 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "set_subscription_localization",
     {
-      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
       description: "Create or update a localization for a subscription",
-      inputSchema: {
+      inputSchema: z.object({
         subscriptionId: z
           .string()
-          .describe("The subscription ID (used for creating new localizations)"),
+          .describe(
+            "The subscription ID (used for creating new localizations)",
+          ),
         localizationId: z
           .string()
           .optional()
-          .describe("Existing localization ID (provide to update instead of create)"),
+          .describe(
+            "Existing localization ID (provide to update instead of create)",
+          ),
         locale: z.string().describe("Locale code (e.g. en-US)"),
         name: z.string().describe("Display name"),
         description: z.string().optional().describe("Description"),
-      },
+      }),
     },
     async ({ subscriptionId, localizationId, locale, name, description }) => {
       if (localizationId) {
@@ -173,7 +258,11 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
             },
           },
         );
-        return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+        return {
+          content: [
+            { type: "text" as const, text: JSON.stringify(result, null, 2) },
+          ],
+        };
       }
 
       const result = await client.post("/v1/subscriptionLocalizations", {
@@ -181,27 +270,38 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
           type: "subscriptionLocalizations",
           attributes: { locale, name, description },
           relationships: {
-            subscription: { data: { id: subscriptionId, type: "subscriptions" } },
+            subscription: {
+              data: { id: subscriptionId, type: "subscriptions" },
+            },
           },
         },
       });
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "list_subscription_price_points",
     {
-      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
       description:
         "List available price points for a subscription, optionally filtered by territory",
-      inputSchema: {
+      inputSchema: z.object({
         subscriptionId: z.string().describe("The subscription ID"),
         territory: z
           .string()
           .optional()
           .describe("Filter by territory code (e.g. USA, GBR, JPN)"),
-      },
+      }),
     },
     async ({ subscriptionId, territory }) => {
       const params: Record<string, string> = {};
@@ -213,7 +313,9 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
         params,
       );
       return {
-        content: [{ type: "text" as const, text: JSON.stringify(pricePoints, null, 2) }],
+        content: [
+          { type: "text" as const, text: JSON.stringify(pricePoints, null, 2) },
+        ],
       };
     },
   );
@@ -221,16 +323,23 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
   server.registerTool(
     "set_subscription_price",
     {
-      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
       description: "Set a price point for a subscription",
-      inputSchema: {
+      inputSchema: z.object({
         subscriptionId: z.string().describe("The subscription ID"),
         pricePointId: z.string().describe("The subscription price point ID"),
         startDate: z
           .string()
           .optional()
-          .describe("Start date for the price (YYYY-MM-DD), null for immediate"),
-      },
+          .describe(
+            "Start date for the price (YYYY-MM-DD), null for immediate",
+          ),
+      }),
     },
     async ({ subscriptionId, pricePointId, startDate }) => {
       const attributes: Record<string, unknown> = {};
@@ -249,33 +358,51 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
           },
         },
       });
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "list_subscription_offers",
     {
-      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
-      description: "List promotional offers for a subscription",
-      inputSchema: {
-        subscriptionId: z.string().describe("The subscription ID"),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
       },
+      description: "List promotional offers for a subscription",
+      inputSchema: z.object({
+        subscriptionId: z.string().describe("The subscription ID"),
+      }),
     },
     async ({ subscriptionId }) => {
       const offers = await client.get(
         `/v1/subscriptions/${subscriptionId}/promotionalOffers`,
       );
-      return { content: [{ type: "text" as const, text: JSON.stringify(offers, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(offers, null, 2) },
+        ],
+      };
     },
   );
 
   server.registerTool(
     "create_subscription_offer",
     {
-      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: true,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
       description: "Create a promotional offer for a subscription",
-      inputSchema: {
+      inputSchema: z.object({
         subscriptionId: z.string().describe("The subscription ID"),
         name: z.string().describe("Offer reference name"),
         offerCode: z.string().describe("Unique offer code"),
@@ -293,22 +420,41 @@ export function registerSubscriptionsTools({ server, client }: ToolContext): voi
           .enum(["PAY_AS_YOU_GO", "PAY_UP_FRONT", "FREE_TRIAL"])
           .describe("Offer mode"),
         numberOfPeriods: z.number().describe("Number of periods for the offer"),
-      },
+      }),
     },
-    async ({ subscriptionId, name, offerCode, duration, offerMode, numberOfPeriods }) => {
+    async ({
+      subscriptionId,
+      name,
+      offerCode,
+      duration,
+      offerMode,
+      numberOfPeriods,
+    }) => {
       const result = await client.post(
         `/v1/subscriptions/${subscriptionId}/promotionalOffers`,
         {
           data: {
             type: "subscriptionPromotionalOffers",
-            attributes: { name, offerCode, duration, offerMode, numberOfPeriods },
+            attributes: {
+              name,
+              offerCode,
+              duration,
+              offerMode,
+              numberOfPeriods,
+            },
             relationships: {
-              subscription: { data: { id: subscriptionId, type: "subscriptions" } },
+              subscription: {
+                data: { id: subscriptionId, type: "subscriptions" },
+              },
             },
           },
         },
       );
-      return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+      return {
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
+      };
     },
   );
 }

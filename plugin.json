@@ -1,0 +1,29 @@
+{
+  "name": "appstoreconnect",
+  "version": "0.2.0",
+  "description": "Apple API tools, complete operation catalog, TestFlight workflows and CLI.",
+  "author": {
+    "name": "Yuri Istomin"
+  },
+  "repository": "https://github.com/yuraist/appstoreconnect-mcp",
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "App Store Connect",
+        "shortDescription": "Your local Apple release and metadata tools.",
+        "longDescription": "Connect Codex to App Store Connect using credentials stored on this Mac. Supports app status, TestFlight, subscriptions, metadata and optional Apple Ads research.",
+        "developerName": "Yuri Istomin",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "defaultPrompt": [
+          "Show my apps and their review status.",
+          "List recent TestFlight builds."
+        ]
+      }
+    }
+  }
+}

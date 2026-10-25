@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { registerAdsTools } from "../../src/tools/ads.js";
 import { AppleAdsClient } from "../../src/api/ads-client.js";
 
@@ -99,7 +99,8 @@ describe("Apple Ads Tools", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({ data: [], pagination: { totalResults: 0 } }),
+        json: () =>
+          Promise.resolve({ data: [], pagination: { totalResults: 0 } }),
       });
 
       const handler = handlerFor("get_search_term_popularity");
@@ -138,7 +139,9 @@ describe("Apple Ads Tools", () => {
       })) as { content: Array<{ type: string; text: string }> };
 
       const parsed = JSON.parse(result.content[0].text);
-      expect(parsed.items).toEqual([{ searchTerm: "meal planner", searchPopularity1to5: 4 }]);
+      expect(parsed.items).toEqual([
+        { searchTerm: "meal planner", searchPopularity1to5: 4 },
+      ]);
       expect(parsed.totalResults).toBe(1);
     });
 
@@ -146,7 +149,8 @@ describe("Apple Ads Tools", () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({ data: [], pagination: { totalResults: 0 } }),
+        json: () =>
+          Promise.resolve({ data: [], pagination: { totalResults: 0 } }),
       });
 
       const handler = handlerFor("get_keyword_suggestions");

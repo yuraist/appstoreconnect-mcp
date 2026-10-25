@@ -21,10 +21,16 @@ interface JsonApiResource {
   relationships?: Record<string, unknown>;
 }
 
-interface JsonApiResponse {
-  data: JsonApiResource | JsonApiResource[];
+export interface JsonApiResponse {
+  data: JsonApiResource | JsonApiResource[] | null;
+  included?: JsonApiResource[];
   links?: { next?: string };
-  errors?: Array<{ status: string; code: string; title: string; detail: string }>;
+  errors?: Array<{
+    status: string;
+    code: string;
+    title: string;
+    detail: string;
+  }>;
 }
 
 function flatten(resource: JsonApiResource): Record<string, unknown> {
@@ -32,6 +38,9 @@ function flatten(resource: JsonApiResource): Record<string, unknown> {
     id: resource.id,
     type: resource.type,
     ...resource.attributes,
+    ...(resource.relationships
+      ? { relationships: resource.relationships }
+      : {}),
   };
 }
 
@@ -54,29 +63,67 @@ export class AppStoreConnectClient {
     method: string,
     url: string,
     body?: unknown,
+    attempt = 0,
   ): Promise<JsonApiResponse> {
+    const target = new URL(url, BASE_URL);
+    if (target.origin !== BASE_URL || target.username || target.password) {
+      throw new Error(
+        "Requests and pagination must stay on api.appstoreconnect.apple.com",
+      );
+    }
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.getToken()}`,
       "Content-Type": "application/json",
     };
 
-    const response = await fetch(url, {
+    const response = await fetch(target.href, {
       method,
       headers,
-      body: body ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      redirect: "error",
+      signal: AbortSignal.timeout(60_000),
     });
 
-    if (response.status === 429) {
-      const retryAfter = parseInt(response.headers.get("Retry-After") || "1", 10);
+    if (response.status === 429 && attempt < 3) {
+      const header = response.headers.get("Retry-After") || "1";
+      const seconds = /^\d+$/.test(header)
+        ? Number(header)
+        : (Date.parse(header) - Date.now()) / 1000;
+      const retryAfter = Number.isFinite(seconds)
+        ? Math.max(0, Math.min(30, seconds))
+        : 1;
       await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
-      return this.request(method, url, body);
+      return this.request(method, url, body, attempt + 1);
     }
 
     if (response.status === 204) {
       return { data: [] };
     }
 
-    const json = (await response.json()) as JsonApiResponse;
+    const contentType =
+      response.headers?.get("content-type") || "application/json";
+    if (response.ok && !contentType.includes("json")) {
+      const bytes = Buffer.from(await response.arrayBuffer());
+      return {
+        data: null,
+        ...{
+          contentType,
+          encoding: "base64",
+          bytes: bytes.length,
+          content: bytes.toString("base64"),
+        },
+      };
+    }
+    let json: JsonApiResponse;
+    try {
+      json = (await response.json()) as JsonApiResponse;
+    } catch {
+      throw new AppStoreConnectError(
+        response.status,
+        "INVALID_RESPONSE",
+        `Apple returned a non-JSON response (${response.status})`,
+      );
+    }
 
     if (!response.ok) {
       const firstError = json.errors?.[0];
@@ -91,7 +138,22 @@ export class AppStoreConnectClient {
     return json;
   }
 
-  async get(path: string, params?: Record<string, string>): Promise<unknown> {
+  /** One page, preserving JSON:API relationships, included resources and links. */
+  async raw(
+    method: string,
+    path: string,
+    body?: unknown,
+  ): Promise<JsonApiResponse> {
+    return this.request(method, new URL(path, BASE_URL).href, body);
+  }
+
+  async get(
+    path: string,
+    params?: Record<string, string>,
+    page = 0,
+  ): Promise<unknown> {
+    if (page >= 100)
+      throw new Error("Pagination exceeded 100 pages; narrow the query");
     let url = path.startsWith("http") ? path : `${BASE_URL}${path}`;
     if (params) {
       const searchParams = new URLSearchParams(params);
@@ -104,14 +166,18 @@ export class AppStoreConnectClient {
       let results = json.data.map(flatten);
 
       if (json.links?.next) {
-        const nextResults = (await this.get(json.links.next)) as Record<string, unknown>[];
+        const nextResults = (await this.get(
+          json.links.next,
+          undefined,
+          page + 1,
+        )) as Record<string, unknown>[];
         results = results.concat(nextResults);
       }
 
       return results;
     }
 
-    return flatten(json.data);
+    return json.data ? flatten(json.data) : null;
   }
 
   async post(path: string, body: unknown): Promise<unknown> {
@@ -121,7 +187,7 @@ export class AppStoreConnectClient {
     if (Array.isArray(json.data)) {
       return json.data.map(flatten);
     }
-    return flatten(json.data);
+    return json.data ? flatten(json.data) : null;
   }
 
   async patch(path: string, body: unknown): Promise<unknown> {
@@ -131,7 +197,7 @@ export class AppStoreConnectClient {
     if (Array.isArray(json.data)) {
       return json.data.map(flatten);
     }
-    return flatten(json.data);
+    return json.data ? flatten(json.data) : null;
   }
 
   async delete(path: string): Promise<void> {

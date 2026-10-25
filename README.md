@@ -4,7 +4,28 @@
   <img src="docs/hero.jpg" alt="App Store Connect MCP Server" width="700">
 </p>
 
-A [Model Context Protocol](https://modelcontextprotocol.io/) server that wraps Apple's App Store Connect API v2. Gives Claude (or any MCP client) direct access to manage apps, in-app purchases, subscriptions, TestFlight, product page experiments, and App Review submissions.
+A [Model Context Protocol](https://modelcontextprotocol.io/) server that wraps Apple's App Store Connect API (official OpenAPI 4.5.1). Gives Claude (or any MCP client) direct access to manage apps, in-app purchases, subscriptions, TestFlight, product page experiments, and App Review submissions.
+
+## API-first release 0.2.0
+
+The server exposes 60 tools plus optional Apple Ads tools. A searchable catalog covers all **1303 operations** in the pinned Apple specification. Search and inspect an operation, then execute a validated GET with `read_api` or a mutation with `write_api`. Reads preserve the JSON:API envelope; writes support dry-run. This avoids thousands of MCP tool definitions while keeping the full public API reachable.
+
+New named workflows cover TestFlight groups, public links, tester membership, beta review, export compliance, What to Test, signed build uploads, and file delivery for screenshots/previews/review attachments. App Store submission now attaches the app version and actually submits its draft.
+
+Use the **same API client from the CLI**:
+
+```bash
+npm run build
+node build/cli.js search betaGroups
+node build/cli.js describe betaGroups_createInstance
+node build/cli.js read apps_getCollection
+node build/cli.js write betaGroups_createInstance group.json --dry-run
+node build/cli.js upload signed-build.json
+```
+
+`npm run install:local -- --shared-skill` also links the shared agent skill to this checkout, preserving an existing skill symlink. `npm run install:local` refreshes the local plugin files and installs `asc-api` and `appstoreconnect-mcp` links under `~/.local/bin`. Refresh the existing Codex personal marketplace plugin with `codex plugin add appstoreconnect@personal --json`. Existing Claude MCP registrations using `scripts/launch.mjs` load the new build on reconnect. New Codex chats refresh the discovered tools; the CLI can be used immediately.
+
+MCP uses SDK 2.4 with protocol `2026-07-28` and a compatibility listener for older clients. The plugin includes a workflow skill and portable, Codex and Claude manifests. See [API workflow guide](docs/api-first.md) and [compatibility research](docs/maintenance/2026-10-25-api-first.md).
 
 ## What You Can Do
 
@@ -22,11 +43,11 @@ A [Model Context Protocol](https://modelcontextprotocol.io/) server that wraps A
 
 **Keyword Research (Apple Ads)** — Apple's own App Store search term popularity, keyword suggestions, and impression share. Optional, and needs separate credentials — see [Apple Ads setup](#apple-ads-setup-optional).
 
-See the full [tool reference](docs/tools.md) for all 51+ available tools.
+See the full [tool reference](docs/tools.md) for named tools and the full API catalog.
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22.12+ (or a newer supported Node release)
 - An [Apple Developer](https://developer.apple.com/) account with App Store Connect access
 - An App Store Connect API key (`.p8` file) — [how to create one](https://developer.apple.com/documentation/appstoreconnectapi/creating_api_keys_for_app_store_connect_api)
 
@@ -154,7 +175,6 @@ Your API key (`.p8` file) never leaves your machine. The MCP server runs locally
 ## License
 
 MIT
-
 
 ## Codex and other local MCP clients
 

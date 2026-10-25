@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-"""Install or refresh the personal local Codex plugin from this checkout."""
+"""Compatibility entrypoint for the local plugin installer."""
 from pathlib import Path
-import json, shutil, subprocess
-root=Path(__file__).resolve().parent.parent
-home=Path.home()
-helpers=home/'.codex/skills/.system/plugin-creator/scripts'
-plugin=home/'plugins/appstoreconnect'
-if not (plugin/'.codex-plugin/plugin.json').exists():
-    subprocess.run(['python3',str(helpers/'create_basic_plugin.py'),'appstoreconnect','--with-mcp','--with-marketplace'],check=True)
-name=subprocess.check_output(['python3',str(helpers/'read_marketplace_name.py')],text=True).strip()
-shutil.copy2(root/'codex-plugin/plugin.json',plugin/'.codex-plugin/plugin.json')
-node=shutil.which('node')
-if not node:raise SystemExit('Install Node.js before enabling the MCP plugin.')
-(plugin/'.mcp.json').write_text(json.dumps({'mcpServers':{'appstoreconnect':{'command':node,'args':[str(root/'scripts/launch.mjs')]}}},indent=2)+'\n')
-subprocess.run(['python3',str(helpers/'update_plugin_cachebuster.py'),str(plugin)],check=True)
-subprocess.run(['python3',str(helpers/'validate_plugin.py'),str(plugin)],check=True)
-subprocess.run(['codex','plugin','add','appstoreconnect@'+name,'--json'],check=True)
-print('Start a new Codex task to load the updated plugin.')
+import shutil
+import subprocess
+import sys
 
+root = Path(__file__).resolve().parent.parent
+node = shutil.which('node')
+if not node:
+    raise SystemExit('Install Node.js before enabling the MCP plugin.')
+subprocess.run([node, str(root / 'scripts/install-local.mjs'), *sys.argv[1:]], check=True)
+local_codex = Path.home() / '.local/bin/codex'
+codex = str(local_codex) if local_codex.exists() else shutil.which('codex')
+if not codex:
+    raise SystemExit('Plugin files installed. Install Codex, then run codex plugin add appstoreconnect@personal --json.')
+subprocess.run([codex, 'plugin', 'add', 'appstoreconnect@personal', '--json'], check=True)
+print('Start a new Codex chat to load the updated tools.')

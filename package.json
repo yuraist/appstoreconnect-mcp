@@ -1,6 +1,6 @@
 {
   "name": "appstoreconnect-mcp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "MCP server for App Store Connect and Apple Ads, compatible with Codex, Claude, and other MCP clients",
   "type": "module",
   "license": "MIT",
@@ -22,30 +22,51 @@
     "codex"
   ],
   "bin": {
-    "appstoreconnect-mcp": "./build/index.js"
+    "appstoreconnect-mcp": "./build/index.js",
+    "asc-api": "./build/cli.js"
   },
   "scripts": {
-    "build": "tsc && chmod 755 build/index.js",
+    "build": "tsc && chmod 755 build/index.js build/cli.js",
     "start": "node build/index.js",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "smoke": "node scripts/smoke.mjs",
-    "smoke:live": "node scripts/smoke.mjs --live"
+    "smoke:live": "node scripts/smoke.mjs --live",
+    "api": "node build/cli.js",
+    "smoke:legacy": "node scripts/smoke.mjs --legacy",
+    "install:local": "node scripts/install-local.mjs",
+    "spec:update": "node scripts/update-apple-spec.mjs"
   },
   "files": [
-    "build"
+    "build",
+    "data",
+    "scripts/launch.mjs",
+    "scripts/install-local.mjs",
+    "skills",
+    "plugin.json",
+    "mcp.json",
+    ".mcp.json",
+    ".claude-plugin",
+    "codex-plugin"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "dotenv": "^16.4.0",
     "jsonwebtoken": "^9.0.0",
-    "zod": "^3.25.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.0",
-    "@types/node": "^22.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
+    "@types/node": "^22.20.5",
+    "mcp-sdk-v1": "npm:@modelcontextprotocol/sdk@^1.32.2",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.12"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

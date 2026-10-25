@@ -1,3 +1,18 @@
+# API-first tools (0.2.0)
+
+- `search_api_operations`: search the official catalog by resource/operation and HTTP method; paginated offline results.
+- `get_api_operation`: exact inputs, request schemas and referenced definitions.
+- `read_api`: schema-validated GET, one JSON:API page with relationships and includes.
+- `write_api`: schema-validated POST/PATCH/DELETE, with optional dryRun.
+- `create_beta_group`, `update_beta_group`: groups, public links and limits.
+- `create_beta_tester`, `add_testers_to_beta_group`, `remove_testers_from_beta_group`: invitations and group membership.
+- `submit_beta_review`, `get_beta_review_status`: external TestFlight review.
+- `set_build_export_compliance`, `set_beta_build_localization`: compliance and localized What to Test.
+- `upload_build`: stream a ready signed binary with Apple's Build Upload API.
+- `upload_reserved_asset`: deliver screenshot/preview/review attachment/build-file reservations.
+
+The existing `submit_for_review` now resolves/reuses a draft, attaches its app version and sets `submitted=true`. Optional `versionId` and `submissionId` support explicit selection and resuming. All older tools remain available. See [API-first workflows](api-first.md).
+
 # Tool Reference
 
 All tools available through the App Store Connect MCP server, grouped by domain.

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { registerBuildsTools } from "../../src/tools/builds.js";
 import { AppStoreConnectClient } from "../../src/api/client.js";
 

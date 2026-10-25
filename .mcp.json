@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "appstoreconnect": {
+      "command": "appstoreconnect-mcp"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { AppStoreConnectClient } from "../api/client.js";
 import { AppleAdsClient } from "../api/ads-client.js";
 
